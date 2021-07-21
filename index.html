@@ -38,11 +38,12 @@
                 <div class="rind_now_list">
                     <div class="rind_now_per">
                         <dl class="now_per_top">
-                            <dt><img id="now_img" src="http://pan-yz.chaoxing.com/thumbnail/0,0,50/e6c70fb0cc1a712ce0895986edf97480"
+                            <dt><img id="now_img"
+                                     src="http://pan-yz.chaoxing.com/thumbnail/0,0,50/e6c70fb0cc1a712ce0895986edf97480"
                                      alt=""></dt>
                             <dd><h6 class="now_per_title">成人区域</h6>
                                 <p class="now_per_type"><span class="gsyz">使用中</span></p>
-                                <p class="now_per_word">预约人 <span>15811391635</span></p>
+                                <p class="now_per_word">预约人 <span>15811391638</span></p>
                                 <p class="now_per_word">日期 <span id="now_date"></span></p>
                                 <p class="now_per_word">时间 <span id="now_time">08:30-18:00 9小时30分钟</span></p></dd>
                         </dl>
@@ -55,51 +56,72 @@
         <div class="rind_near"><h6 class="rind_near_title">最近预约</h6>
             <div class="rind_near_data">
                 <div class="rind_near_per"><h6 class="near_per_title">成人区域</h6>
-                    <p class="near_per_time">2021-06-20 08:30-18:00 <span>9小时30分钟</span> <label class="near_per_btn">再次预约</label>
-                    </p></div>
+                    <p class="near_per_time">
+                        <span id="per_time1" style="margin-left:0rem">2021-06-20 08:30-18:00</span>
+                        <span>9小时30分钟</span> <label
+                            class="near_per_btn">再次预约</label>
+                    </p>
+                </div>
                 <div class="rind_near_per"><h6 class="near_per_title">成人区域</h6>
-                    <p class="near_per_time">2021-06-17 08:30-18:00 <span>9小时30分钟</span> <label class="near_per_btn">再次预约</label>
-                    </p></div>
-                <div class="rind_near_per"><h6 class="near_per_title">成人区域</h6>
-                    <p class="near_per_time">2021-06-10 08:30-18:00 <span>9小时30分钟</span> <label class="near_per_btn">再次预约</label>
-                    </p></div>
+                    <p class="near_per_time">
+                        <span id="per_time2" style="margin-left:0rem">2021-06-21 08:30-18:00</span>
+                        <span>9小时30分钟</span><label
+                                class="near_per_btn">再次预约</label>
+                    </p>
+                </div>
+<!--                <div class="rind_near_per"><h6 class="near_per_title">成人区域</h6>-->
+<!--                    <p class="near_per_time">2021-06-10 08:30-18:00 <span>9小时30分钟</span> <label class="near_per_btn">再次预约</label>-->
+<!--                    </p></div>-->
             </div>
         </div>
         <div class="log_out">退出登录</div> <!----> <!----></div> <!----> <!----></div>
 <img src="https://stcs.chaoxing.com/api/stcs/log/add?deptid=97561&amp;uid=140135670&amp;type=3&amp;aid=%202178%20&amp;page=%2Ffront%2Fthird%2Fapps%2Freserve%2Fitem%2Findex&amp;params=%7B%22reserveId%22%3A%222178%22%2C%22resvAppId%22%3A%222178%22%2C%22enc%22%3A%22b9422656a063f2d87c351e01bd215c7a%22%2C%22fidEnc%22%3A%5B%22d05867b45248ce4e%22%2C%22d05867b45248ce4e%22%5D%7D"
-width="0" height="0">
+     width="0" height="0">
 </body>
 <script type="application/javascript">
-    //获取日期
-    function getCurrentDate() {
-        var myDate = new Date();
-        var year = myDate.getFullYear(); //年
-        var month = myDate.getMonth() + 1; //月
-        var day = myDate.getDate(); //日
-        var days = myDate.getDay();
-        days = "星期" + "日一二三四五六".charAt(days)
-
-        var str = year + "-" + month + "-" + day + " " + days;//2021-06-26 星期六
-        return str;
+    Date.prototype.format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
     }
 
+    //获取日期
     function load() {
         // 设置日期
         var myDate = new Date();
-        var year = myDate.getFullYear(); //年
-        var month = myDate.getMonth() + 1; //月
-        var day = myDate.getDate(); //日
         var days = myDate.getDay();
         days = "星期" + "日一二三四五六".charAt(days)
-        var str = year + "-" + month + "-" + day + " " + days;//2021-06-26 星期六
+        var str = myDate.format("yyyy-MM-dd") + " " + days;//2021-06-26 星期六
         document.getElementById("now_date").innerText = str;
         // 设置晚自习
         var hours = myDate.getHours();
-        if (hours >= 17){
+        if (hours >= 17) {
             document.getElementsByClassName("now_per_title")[0].innerText = "夜间自习";
             document.getElementById("now_time").innerText = "18:00-22:00 4小时";
             document.getElementById("now_img").src = "http://pan-yz.chaoxing.com/thumbnail/0,0,50/e5c5d0ed80c8478b42a0202f42609203";
         }
+
+        var offNum = 24 * 60 * 60 * 1000
+        if (myDate.getDay() == 2 || myDate.getDay() == 3) {
+            offNum = myDate.getDay() * offNum
+        }
+        var preDay1 = new Date(myDate.getTime() - offNum)
+        var preDate1 = preDay1.format("yyyy-MM-dd") + " 08:30-18:00 "
+        document.getElementById("per_time1").innerText = preDate1;
+
+        var preDay2 = new Date(preDay1 - 24 * 60 * 60 * 1000).format("yyyy-MM-dd")
+        var preDate2 = preDay2 + " 08:30-18:00 "
+        document.getElementById("per_time2").innerText = preDate2;
     }
 </script>
 </html>
