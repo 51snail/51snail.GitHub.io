@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head><title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="format-detection" content="telephone=no,email=no,address=no">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="cache-control" content="no-cache"/>
+    <meta http-equiv="expires" content="0"/>
+    <link rel="stylesheet" href="/staticreserve/style/reset.css">
+    <link rel="stylesheet" href="/staticreserve/style/apps/reserve/reserve.css?20180619">
+    <link rel="stylesheet" href="/staticreserve/style/apps/reserve/iphonex.css"> <!--表单采集css-->
+    <link rel="stylesheet" href="/staticreserve/style/forms/gather/mobile/hind/index.css">
+    <link rel="stylesheet" href="/staticreserve/style/forms/gather/mobile/hind/common.css">
+    <link rel="stylesheet" href="/staticreserve/js/lib/jquery/slider/slider.css">
+    <script type="text/javascript" src="/staticreserve/js/lib/requirejs/require.min.js"></script>
+    <script type="text/javascript" src="/staticreserve/js/src/front/apps/reserve/main.js?t=20180727"></script>
+    <script>requirejs.config({urlArgs: 't=20180619'})</script>
+    <script>window['jsBridge'] = {}</script>
+    <script src="/staticreserve/js/lib/jquery/v1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/staticreserve/js/lib/jquery/slider/slider.js" type="text/javascript" charset="utf-8"></script>
+    <style> /*信息提示框*/
+    .tip_pop {
+        z-index: 10;
+        position: fixed;
+        width: 6.9rem;
+        height: auto;
+        padding: .2rem .3rem;
+        left: .3rem;
+        bottom: .5rem;
+        background: #939393;
+        border-radius: .08rem;
+    }
+
+    .tip_pop_word {
+        line-height: .4rem;
+        font-size: .28rem;
+        color: #fff;
+        text-align: center;
+    } </style>
+</head>
+<body>
+<div id="gItemList" v-cloak>
+    <div class="cx_search" style="display: block;">
+        <div class="screenBtn" :class="{hasCheck: sortIds.length > 0}" @click="sortsOpen"></div>
+        <form id="loginForm" @submit.prevent="search()" method="post">
+            <div class="cx_search-box" :class="{cxSearchFocus:isFocus}"> < a href=" "></
+            a> <input type="text" name="sw" id="cx_search-input" value="" placeholder="搜索" v-model="sw"
+                      @focus="setFocus()" @blur="setBlur()"/>
+            <p v-if="sw.length" class="cx_search-clear" @click="clearSw()"></p>
+    </div>
+    </form>
+    <iframe id="rfFrame" name="rfFrame" src="about:blank" style="display:none;"></iframe>
+</div>
+<div class="secNodata" v-show="searched && reserveItemList.length==0 && sortIds.length != 0">
+    没有符合条件的{{reserveData.objName}}，请更改筛选条件
+</div>
+<p class="gnorecord" v-if="isNotExistData && !searched">暂无数据</p>
+<ul class="gUist">
+    <li class="grlists" v-for="(reserveItem,index) in reserveItemList" @click="goReserve(reserveItem)">
+        <div class="grimg">
+            <div class="slider1" :id="gernerateId(index)">
+                <div v-for="picItem in reserveItem.picurl" class="slide">< a href="javascript:void(0);">< img
+                    :src="imageUrl(picItem)" alt=""/>
+                </
+                a>
+            </div>
+        </div>
+        <div class="gmy_icon" v-if="reserveItem.isMyself"></div>
+        <ul class="groom_type">
+            <li class="dsp" v-if="reserveItem.waitAprv">待审批</li>
+            <li class="xsp" v-if="reserveItem.isAprv === 1">需审批</li>
+            <li class="yyy" v-if="reserveItem.hasReserve">已预约</li>
+        </ul>
+        </div>
+        <div class="grinfo"><h6 class="gmeetNum">{{reserveItem.name}}</h6>
+            <div class="gmeetWord"><p class="gmeetTime" v-if="reserveData.opentimeShow==1"
+                                      @click.stop="openTime(reserveItem)"><label>开放时间:</label> <span
+                    v-if="reserveItem.reserveInterval.available==1">{{reserveItem.reserveInterval.startTime}}-{{reserveItem.reserveInterval.endTime}}</span>
+                <span v-if="reserveItem.reserveInterval.available==0">今日暂不开放</span></p>
+                <p class="gmeetNo" v-if="reserveItem.propertyValues.length == 0">暂无详细信息</p>
+                <p class="gmeetAdr" style="color: #666666;" v-for="item in reserveItem.propertyValues" v-if="item.key">
+                    {{item.key}}:<span>{{item.value}}</span></p></div>
+            <ul class="gmeetType">
+                <li v-for="data in reserveItem.reserveSort">{{data.name}}</li>
+            </ul>
+        </div>
+    </li>
+</ul> <!--遮罩-->
+<div class="screenMask" v-if="sortsShow" @click="cancel"></div> <!--筛选-->
+<div class="gscreen" v-if="sortsShow">
+    <div class="gsc_cont"><h6 class="gsc_cont_title">筛选条件</h6>
+        <div class="gsc_data gsc_type_data" v-for="parent in reserveData.reserveSort"><h6 class="gsc_title"
+                                                                                          :class="{selTitle: parent.checked}"
+                                                                                          v-if="parent.pid == 0">
+            {{parent.name}}</h6>
+            <ul class="gsc_list">
+                <li class="gsc_type" :class="{select: child.checked}" v-for="(child,index) in reserveData.reserveSort"
+                    v-if="child.pid == parent.id" @click="choseSort(child.id,child.pid,index)"> {{child.name}}
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="gsc_btns"><span class="gsc_cal" @click="reChose">重置</span> <span class="gsc_sure"
+                                                                                 @click="confirm">筛选</span></div>
+</div> <!--信息提示框-->
+<div class="tip_pop" v-if="reserveTips"><p class="tip_pop_word">{{reserveTips.content}}</p></div> <!--遮罩-->
+<div class="screenMask" v-if="openTimeDialog"></div> <!--开放时间弹窗-->
+<div class="opendate_pop" v-if="openTimeDialog"><h6 class="od_top">开放时间 <span class="od_close"
+                                                                              @click="openTimeDialog=false"></span></h6>
+    <ul class="od_cont">
+        <li class="od_lis" v-for="item in reserveIntervalList"><span>{{item.week | toWeek()}}</span> <span
+                v-if="item.available==1">{{item.startTime}}--{{item.endTime}}</span> <span
+                v-if="item.available==0">不可预约</span></li>
+    </ul>
+    <div @click="goReserve(null)" class="od_btn">立即预约</div>
+</div> <!--加载中-->
+<div class="res_loading" v-if="loadingShow">
+    <div class="res_load_cont">
+        <div class="loading_iocn"></div>
+        <p class="loading_info">{{tipTitle}}</p></div>
+</div>
+</div>
+<script> require(['Vue', 'moment', 'cookies', 'popup', 'dropload'], function (Vue, moment, Cookies, popup) {
+    'use strict'
+    var reserveId = '2178',
+        resvAppId = '2178',//自定义预约应用ID fidEnc = 'd05867b45248ce4e' function loadData(url, data) { return $.getJSON(url, data) } function loadItemList(vm, sw, sortIds) { vm.loadingShow = true var droploadOpt = {sw: sw, reserveId: reserveId, resvAppId: resvAppId, cpage: 1, pageSize: 10, sortIds: sortIds} var _this = vm var dropload = $('#gItemList').dropload({ scrollArea: window, threshold: 30, domDown: { domClass: 'isbottom', domNoData: '' }, loadDownFn: function (me) { loadData('/data/apps/reserve/item/list', droploadOpt).then(function (data) { var reserveItemList = data.data.reserveItemList if (reserveItemList.length === 0) {//没有数据、无创建权限 _this.isNotExistData = true } var reserveUserList = data.data.reserveUserList for (var i = 0; i < reserveItemList.length; i++) { var item = reserveItemList[i] if (item.uid == Cookies.get('oa_uid')) {//判断是否为自建 item.isMyself = true } for (var j = 0; j < reserveUserList.length; j++) { if (item.id === reserveUserList[j].itemId) {//预约记录中存在该对象对应预约记录 if (item.isAprv === 1) {//判断该对象是否需要审批，若需要审批-判断对应审批状态显示对应字样 if (reserveUserList[j].aprvStatusTypeId === 2 || reserveUserList[j].aprvStatusTypeId == undefined) { //判断审批状态2为已同意或无审批数据（该对象修改为审批之前已预约）：展示“已预约”字样 item.hasReserve = true } if (reserveUserList[j].aprvStatusTypeId === 1) {//判断审批状态1为已同意：展示“待审批”字样 item.waitAprv = true } } else {//不需要审批直接显示“已预约”字样 item.hasReserve = true } } } var dataArray = []; if(reserveItemList[i].picurl.startsWith("[")){ dataArray = JSON.parse(reserveItemList[i].picurl) }else { dataArray.push(reserveItemList[i].picurl) } reserveItemList[i].picurl = dataArray; } _this.reserveItemList = _this.reserveItemList.concat(reserveItemList) vm.loadingShow = false //用于判断当数据只有一页情况下隐藏数据结尾提示并锁定数据 if (data.data.totalPage == 1) { $('.isbottom').hide() } else { $('.isbottom').show() } droploadOpt.cpage = droploadOpt.cpage + 1 if (data.data.reserveItemList.length < droploadOpt.pageSize || droploadOpt.cpage > data.data.totalPage) { // 锁定 me.lock() // 无数据 me.noData() } vm.$nextTick(function () { //图片轮播,每个只能执行一次，否则报错 for(var i = _this.sliderIndex;i < _this.reserveItemList.length;i++){ $('#slider'+i).bxSlider({ auto: true, pager: false, controls: false//隐藏左右按钮 }); } _this.sliderIndex = _this.reserveItemList.length; me.delayResetload() }) }) } }) return { dropload: dropload, droploadOpt: droploadOpt } } new Vue({ el: '#gItemList', data: function () { return { reserveData: '',//预约模板信息 reserveItemList: [], sw: '', sortsShow: false, isFocus: false, searched: false, isNotExistData: false, sortIds: [], reserveTips: {}, reserveIntervalList: [], openTimeDialog: false, loadingShow: true, tipTitle: '加载中...', sliderIndex: 0 } }, methods: { goReserve: function (e) { if (e == null) { e = this.reserveItem } if (this.reserveData.timeModel === 0) { popup.alert('微信暂时只支持多人预约模式，请在学习通中预约') return } location.href = location.origin + '/front/third/apps/reserve/item/reserve?itemId=' + e.id + '&fidEnc=' + fidEnc }, sortsOpen: function () { this.sortsShow = true }, gernerateId: function (index){ return "slider" + index; }, confirm: function () { var sorts = this.reserveData.reserveSort var ids = '' for (var i = 0; i < sorts.length; i++) { if (sorts[i].checked) { ids += sorts[i].id + ',' } } if (ids.length > 0) { ids = ids.substr(0, ids.length - 1) } this.sortIds = ids this.sortsShow = false this.droploader.droploadOpt.cpage = 1 this.loadItemListData(this.sw, this.sortIds) }, cancel: function () { var sorts = this.reserveData.reserveSort for (var i = 0; i < sorts.length; i++) { sorts[i].checked = false for (var j = 0; j < this.sortIds.length; j++) { if (sorts[i].id === this.sortIds[j]) { sorts[i].checked = true } } } this.confirm() this.sortsShow = false }, choseSort: function (id, pid, index) { var sorts = this.reserveData.reserveSort sorts[index].checked = !sorts[index].checked this.$forceUpdate() }, reChose: function () { var sorts = this.reserveData.reserveSort for (var i = 0; i < sorts.length; i++) { if (sorts[i].checked) { sorts[i].checked = false } } this.$forceUpdate() }, loadItemListData: function (sw, sortIds) { var _this = this _this.searched = false _this.droploader.droploadOpt.sw = sw _this.droploader.droploadOpt.sortIds = sortIds _this.reserveItemList = [] _this.sliderIndex = 0; _this.$nextTick(function () { _this.droploader.dropload.unlock() _this.droploader.dropload.noData(false) _this.droploader.dropload.resetload() }) setTimeout(function () { if (_this.reserveItemList.length === 0) { _this.searched = true } }, 500) }, search: function () { if (this.sw.length == 0) { popup.alert('检索词不能为空') return } $('#cx_search-input').blur() this.droploader.droploadOpt.cpage = 1 this.loadItemListData(this.sw) }, clearSw: function () { this.sw = '' $('#cx_search-input').blur() this.droploader.droploadOpt.cpage = 1 this.loadItemListData(this.sw) }, setFocus: function () { this.isFocus = true }, setBlur: function () { this.isFocus = false }, openTime: function (reserveItem) { this.reserveIntervalList = reserveItem.reserveIntervalList; this.openTimeDialog = true; this.reserveItem = reserveItem this.$forceUpdate() }, imageUrl: function (url) { if (url.indexOf('/static/style/apps/reserve/icons/default.jpg') != -1) { return '/staticreserve/style/apps/reserve/icons/default.jpg' } return url; } }, filters: { format: function (value, formater) { return moment(value).format(formater) }, toWeek: function (week) { return '周' + '一二三四五六日'.charAt(week - 1) } }, mounted: function () { var _this = this //获取模板信息 loadData('/data/apps/reserve/reserve/info', {reserveId: reserveId, resvAppId: resvAppId}).then(function (json) { if (json.success) { _this.reserveData = json.data.reserveData _this.reserveTips = json.data.reserveTips document.title = json.data.reserveData.name var sorts = _this.reserveData.reserveSort for (var i = 0; i < sorts.length; i++) { sorts[i]['checked'] = false } _this.droploader = loadItemList(_this, _this.sw, _this.sortIds) } }) } }) }) </script>
+<script type="text/javascript"> require(['lever', 'stcsPanel', 'ratio'], function (AlloyLever, stcsPanel) {
+    'use strict'
+    AlloyLever.config({cdn: '/staticreserve/js/lib/lever/vconsole.min.js'})
+    stcsPanel.loadStcs(3, ' 2178 ')
+}) </script>
+</body>
+</html>
