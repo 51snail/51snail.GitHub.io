@@ -131,7 +131,7 @@
     }
 
     function sign() {
-        location.href = 'http://sao315.com/w/api/saoyisao?redirect_uri=' + encodeURIComponent(location.href + '&signType=1')
+        location.href = 'http://sao315.com/w/api/saoyisao?redirect_uri=' + encodeURIComponent(location.href)
     }
 
     //获取日期
@@ -152,9 +152,10 @@
         }
 
         // 设置签到
-        var signType = getUrlParam("signType")
-        // 未签到
-        if (signType == 0 || signType == null) {
+
+        var signType = getUrlParam("qrresult")
+        // 有qrresult说明是扫码返回的，已经签到
+        if (signType == null) {
             $(".gsyz")[0].innerText = "待签到"
             $("#cancel").show()
             $(".sure")[0].innerText = "签到"
