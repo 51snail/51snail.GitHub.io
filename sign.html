@@ -131,7 +131,7 @@
     }
 
     function sign() {
-        location.href = 'http://sao315.com/w/api/saoyisao?redirect_uri=' + encodeURIComponent(location.href)
+        location.href = 'http://sao315.com/w/api/saoyisao?redirect_uri=' + encodeURIComponent(location.origin+"/success.html")
     }
 
     //获取日期
@@ -148,14 +148,13 @@
         if (hours >= 17) {
             document.getElementsByClassName("now_per_title")[0].innerText = "夜间自习";
             document.getElementById("now_time").innerText = "18:00-22:00 4小时";
-            document.getElementById("now_img").src = "http://pan-yz.chaoxing.com/thumbnail/0,0,50/e5c5d0ed80c8478b42a0202f42609203";
+            //document.getElementById("now_img").src = "http://pan-yz.chaoxing.com/thumbnail/0,0,50/e5c5d0ed80c8478b42a0202f42609203";
         }
 
         // 设置签到
-
-        var signType = getUrlParam("qrresult")
-        // 有qrresult说明是扫码返回的，已经签到
-        if (signType == null) {
+        var signType = getUrlParam("signType")
+        // 未签到
+        if (signType == 0 || signType == null) {
             $(".gsyz")[0].innerText = "待签到"
             $("#cancel").show()
             $(".sure")[0].innerText = "签到"

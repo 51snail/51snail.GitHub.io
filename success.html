@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html style="font-size: 48px;">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <meta name="format-detection" content="telephone=no">
+    <title>签到成功</title>
+    <link rel="stylesheet" href="https://office.chaoxing.com/staticreserve/style/reset.css">
+    <link rel="stylesheet" href="https://office.chaoxing.com/staticreserve/style/apps/seat/seat.css?20201111">
+    <link rel="stylesheet" href="https://office.chaoxing.com/staticreserve/style/apps/reserve/iphonex.css">
+    <link type="text/css" rel="stylesheet"
+          href="https://office.chaoxing.com/staticreserve/js/lib/popup/popup.css?t=20180619">
+    <script src="https://office.chaoxing.com/staticreserve/js/lib/jquery/v1/jquery.min.js" type="text/javascript"
+            charset="utf-8"></script>
+</head>
+<body onload="load()">
+<div id="sign_in_success" class="sign_suc">
+    <div class="sign_top">
+        <div class="sing_top_info"><p class="sign_top_adr">成人区域 </p> <h6 class="sign_top_time">08:30 - 18:00</h6>
+            <p class="sign_top_tip">2021-08-31</p>
+            <p class="sigin_top_name">15811391635</p></div>
+    </div>
+    <div class="sign_cont"><p class="sign_type_icon"></p> <h6 class="sign_cont_info">签到成功</h6>
+        <p class="sign_cont_time">14:04</p>
+        <div class="sign_btn" onclick="back()">我知道了</div>
+    </div>
+    <audio id="audio" src="https://office.chaoxing.com/staticreserve/audio/front/apps/reserve/sign_in_success.mp3"
+           style="width: 0px; height: 0px;"></audio>
+</div>
+<img src="https://stcs.chaoxing.com/api/stcs/log/add?deptid=2963&amp;uid=141806705&amp;type=2&amp;aid=10&amp;page=%2Ffront%2Fthird%2Fapps%2Freserve%2FsignIn%2Fsuccess&amp;params=%7B%22resUserId%22%3A%2212577968%22%2C%22reserveId%22%3A%222178%22%2C%22fidEnc%22%3A%22d05867b45248ce4e%22%2C%22enc%22%3A%22b9422656a063f2d87c351e01bd215c7a%22%7D"
+width="0" height="0">
+</body>
+<script type="application/javascript">
+    Date.prototype.format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1, //月份
+            "d+": this.getDate(), //日
+            "h+": this.getHours(), //小时
+            "m+": this.getMinutes(), //分
+            "s+": this.getSeconds(), //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds() //毫秒
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+
+    function load() {
+        // 设置日期
+        var myDate = new Date();
+        $(".sign_top_tip")[0].innerText = myDate.format("yyyy-MM-dd")
+        $(".sign_cont_time")[0].innerText = myDate.format("h:m")
+
+        // 设置晚自习
+        var hours = myDate.getHours();
+        if (hours >= 17) {
+            document.getElementById("sign_top_time").innerText = "18:00 - 22:00";
+        }
+    }
+
+    function back() {
+        location.href = location.origin + "/sign.html?signType=1"
+    }
+</script>
+</html>
