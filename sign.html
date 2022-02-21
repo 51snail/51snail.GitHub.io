@@ -143,6 +143,7 @@
     }
 
     function sign() {
+        alert(location.origin)
         location.href = 'http://sao315.com/w/api/saoyisao?redirect_uri=' + encodeURIComponent(location.origin + "/success.html")
     }
 
