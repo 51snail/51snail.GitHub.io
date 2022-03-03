@@ -69,7 +69,7 @@
                                 </div>
                             </dt>
                             <dd><h6 class="now_per_title">成人区域</h6>
-                                <p class="now_per_type"><span class="gsyz">待签到</span></p>
+                                <p class="now_per_type"><span class="gdqd" id="status">待签到</span></p>
                                 <p class="now_per_word">预约人 <span>15811391635</span></p>
                                 <p class="now_per_word">日期 <span id="now_date">2021-07-22 星期四</span></p>
                                 <p class="now_per_word">时间 <span id="now_time">08:30-18:00 9小时30分钟</span></p></dd>
@@ -143,8 +143,7 @@
     }
 
     function sign() {
-        alert(location.origin)
-        location.href = 'http://sao315.com/w/api/saoyisao?redirect_uri=' + encodeURIComponent(location.origin + "/success.html")
+        location.href = 'https://www.996315.com/api/scan/?redirect_uri=' + encodeURIComponent(location.origin + "/success.html")
     }
 
     //获取日期
@@ -166,11 +165,13 @@
         var signType = getUrlParam("signType")
         // 未签到
         if (signType == 0 || signType == null) {
-            $(".gsyz")[0].innerText = "待签到"
+            $("#status")[0].innerText = "待签到"
+            $("#status").attr("class","gdqd")
             $("#cancel").show()
             $(".sure")[0].innerText = "签到"
         } else {
-            $(".gsyz")[0].innerText = "使用中"
+            $("#status")[0].innerText = "使用中"
+            $("#status").attr("class","gsyz")
             $("#cancel").hide()
             $(".sure")[0].innerText = "签退"
         }
