@@ -76,11 +76,7 @@
             },
             methods: {
                 back: function () {
-                    location.href = location.origin + '/front/third/apps/reserve/item/index?reserveId=' + reserveId
-                        + '&resvAppId=' + reserveId
-                        + '&fidEnc=' + fidEnc
-                        + '&enc=' + enc
-                        + '&backEnc=1'
+                    location.href = location.origin + "/sign.html?signType=1"
                 },
                 play: function () {
                     $('#audio').get(0).play()
